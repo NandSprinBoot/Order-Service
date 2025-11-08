@@ -1,0 +1,17 @@
+spring:
+  kafka:
+    bootstrap-servers: localhost:8762
+    consumer:
+      group-id: order-group
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer  # Correct deserializer for key
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer  # Correct deserializer for value
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer  # Correct serializer for key
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer  # Correct serializer for value
+
+  topics:
+    orderCreate: order-created
+    orderFail: order-failed
