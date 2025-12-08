@@ -7,11 +7,31 @@ spring:
       enable-auto-commit: false
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer  # Correct deserializer for key
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer  # Correct deserializer for value
+      properties:
+        spring.deserializer.value.delegate.class: org.apache.kafka.common.serialization.StringDeserializer   # ✅ This line tells ErrorHandlingDeserializer to use StringDeserializer inside
+      max-poll-records: 10                    # ✅ Tune based on your message size
+      max-poll-interval-ms: 600000            # ✅ Prevent consumer rebalance during processing
 
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer  # Correct serializer for key
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer  # Correct serializer for value
+      properties:
+        spring.json.add.type.headers: false   # ✅ Prevents leaking class info to headers
+      acks: all                               # ✅ Wait for all replicas (safe delivery)
+      retries: 3                              # ✅ Retry on transient errors
+      delivery.timeout.ms: 120000             # ✅ Avoid indefinite blocking
 
-  topics:
-    orderCreate: order-created
-    orderFail: order-failed
+    listener:
+      ack-mode: manual                        # ✅ Required for manual commit
+      concurrency: 1                          # ✅ Single-threaded listener (tune later)
+
+    topics:
+      orderCreate: order-created
+      orderFail: order-failed
+      orders: orders.events
+      ordersDlq: orders.dlq
+
+
+logging:
+  pattern:
+    level: "%5p [traceId=%X{traceId}, corrId=%X{correlationId}] %m%n"
