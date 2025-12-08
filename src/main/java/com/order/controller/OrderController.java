@@ -2,6 +2,9 @@ package com.order.controller;
 
 import static java.util.Objects.nonNull;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.order.dto.OrderDTO;
+import com.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,12 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.order.bean.Order;
-import com.order.service.OrderService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("order")
+@RequestMapping("orders")
 public class OrderController {
 
 	@Autowired
@@ -37,4 +39,11 @@ public class OrderController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(order);
 		}
 	}
+
+    @PostMapping//("/orders")
+    public ResponseEntity<?> createOrder(@RequestBody OrderDTO order) throws JsonProcessingException {
+        orderService.createOrder(order);
+        return ResponseEntity.ok("Order Created");
+    }
+
 }

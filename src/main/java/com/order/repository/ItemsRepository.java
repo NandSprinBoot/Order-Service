@@ -1,4 +1,4 @@
-package com.order.bean.repository;
+package com.order.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
